@@ -6,7 +6,7 @@ pipeline {
         string(name: 'TEST_KEY', defaultValue: 'DVOC-1552', description: 'test')
 
         choice(name: 'STATUS', choices: ['Pass', 'Fail'], description: 'Pick status')
-    
+    }
     stages {
         stage('Export features from Xray'){
             steps {

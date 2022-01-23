@@ -5,18 +5,22 @@ pipeline {
     parameters {
         string(name: 'TEST_KEY', defaultValue: 'DVOC-1552', description: 'test')
         choice(name: 'STATUS', choices: ['Pass', 'Fail'], description: 'Pick status')
+	string(defaultValue: "DEV", description: '', name: 'ENV') 
     }
+
     stages {
-        stage('Export features from Xray'){
+        stage ('Import Results') {
             steps {
-		git branch: 'xray_video', credentialsId: 'performgroup_jenkins_github_app', url: 'https://github.com/rpravipati/cucumber.git'
-              }
-        }
-         
-        stage('Import results to Xray') {
-            steps {
-                step([$class: 'XrayImportBuilder', endpointName: '', importFilePath: '/cucumber/result.xml', importInParallel: 'false', serverInstance: 'CLOUD-2a367cdf-a677-4299-a0be-ae5b08926dc8'])
+                step([$class: 'XrayImportBuilder',
+                endpointName: '',
+                importFilePath: '/cucumber/result.xml',
+                importToSameExecution: 'true',
+                projectKey: params.TEST_KEY,
+                revision: params.TEST_KEY + env.BUILD_NUMBER,
+                serverInstance: 'CLOUD-2a367cdf-a677-4299-a0be-ae5b08926dc8',
+                testEnvironments: params.ENV])
             }
+             
         }
     }
 }
